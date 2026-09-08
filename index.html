@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>Дима и Костя едут по Екатеринбургу</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ДИМА И КОСТЯ // ЕДУТ</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -10,124 +14,203 @@
         }
         
         body {
-            background: #87CEEB;
+            background: #0a0a0a;
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
         }
         
-        #container {
+        #main-container {
+            width: 100%;
+            max-width: 1200px;
+            min-height: 100vh;
+            background: #111;
+            border-left: 1px solid #333;
+            border-right: 1px solid #333;
             position: relative;
-            width: 100%;
-            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
-        #background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transition: background 2s;
+        /* Шапка */
+        header {
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .title {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: 5px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 3px;
+            margin-top: 10px;
+        }
+        
+        /* Контейнер для видео */
+        #video-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
         }
         
         #video-container {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
+            position: relative;
+            width: 100%;
             max-width: 800px;
-            z-index: 10;
+            border: 2px solid #333;
+            background: #000;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
         }
         
         video {
             width: 100%;
             height: auto;
+            display: block;
             mix-blend-mode: screen;
             -webkit-mix-blend-mode: screen;
         }
         
+        /* Текст вокруг видео */
+        .text-top {
+            font-size: 12px;
+            color: #666;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .text-bottom {
+            font-size: 12px;
+            color: #666;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        /* Погода */
         #weather-info {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            font-size: 18px;
-            z-index: 20;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            padding: 15px;
+            font-size: 12px;
+            color: #ccc;
+            z-index: 10;
+            letter-spacing: 1px;
             backdrop-filter: blur(5px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
         }
         
-        #title {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            z-index: 20;
+        /* Нижняя часть */
+        footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #333;
+            background: rgba(0, 0, 0, 0.5);
+            font-size: 11px;
+            color: #555;
             letter-spacing: 2px;
         }
         
-        /* Дорожная разметка */
-        .road-line {
+        /* Декоративные элементы */
+        .corner {
             position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 40%;
-            background: repeating-linear-gradient(
-                90deg,
-                #555 0px,
-                #555 50px,
-                transparent 50px,
-                transparent 80px
-            );
-            opacity: 0.6;
-            z-index: 5;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #444;
         }
         
-        /* Дорога */
-        #road {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            background: linear-gradient(to bottom, #4a4a4a 0%, #333 100%);
-            z-index: 1;
+        .corner-tl {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .corner-tr {
+            top: -1px;
+            right: -1px;
+            border-left: none;
+            border-bottom: none;
+        }
+        
+        .corner-bl {
+            bottom: -1px;
+            left: -1px;
+            border-right: none;
+            border-top: none;
+        }
+        
+        .corner-br {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        /* Анимация */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .blink {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <div id="background"></div>
-        <div id="road"></div>
+    <div id="main-container">
+        <header>
+            <div class="title">ДИМА И КОСТЯ</div>
+            <div class="subtitle">// ЕДУТ ПО ЕКАТЕРИНБУРГУ //</div>
+        </header>
         
-        <div id="title">ДИМА И КОСТЯ</div>
-        <div id="weather-info">Загружаем погоду...</div>
-        
-        <div id="video-container">
-            <video autoplay loop muted playsinline>
-                <source src="video.mp4" type="video/mp4">
-            </video>
+        <div id="video-wrapper">
+            <div class="text-top">— ЗАГРУЗКА РЕАЛЬНОСТИ —</div>
+            
+            <div id="video-container">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                
+                <video autoplay loop muted playsinline>
+                    <source src="video.mp4" type="video/mp4">
+                </video>
+                
+                <div id="weather-info">ЗАГРУЗКА...</div>
+            </div>
+            
+            <div class="text-bottom blink">— [ СВЯЗЬ УСТАНОВЛЕНА ] —</div>
         </div>
+        
+        <footer>
+            <span>© 2024 // ВСЕ ПРАВА ЗАЩИЩЕНЫ // ЕКАТЕРИНБУРГ</span>
+        </footer>
     </div>
     
     <script>
-        const background = document.getElementById('background');
         const weatherDiv = document.getElementById('weather-info');
-        const road = document.getElementById('road');
-        
         let isNight = false;
         let currentWeather = 'clear';
         
@@ -141,7 +224,6 @@
                 const weatherCode = data.current.weather_code;
                 isNight = data.current.is_day === 0;
                 
-                // Определяем тип погоды
                 if (weatherCode <= 1) currentWeather = 'clear';
                 else if (weatherCode <= 3) currentWeather = 'cloudy';
                 else if (weatherCode <= 48) currentWeather = 'foggy';
@@ -149,120 +231,33 @@
                 else if (weatherCode <= 77) currentWeather = 'snow';
                 else currentWeather = 'rain';
                 
-                // Обновляем фон
-                updateBackground();
-                
-                // Обновляем текст
-                let weatherText = 'Ясно';
+                let weatherText = 'ЯСНО';
                 let emoji = '☀️';
-                if (currentWeather === 'cloudy') { weatherText = 'Облачно'; emoji = '☁️'; }
-                else if (currentWeather === 'foggy') { weatherText = 'Туман'; emoji = '🌫️'; }
-                else if (currentWeather === 'rain') { weatherText = 'Дождь'; emoji = '🌧️'; }
-                else if (currentWeather === 'snow') { weatherText = 'Снег'; emoji = '❄️'; }
+                if (currentWeather === 'cloudy') { weatherText = 'ОБЛАЧНО'; emoji = '☁️'; }
+                else if (currentWeather === 'foggy') { weatherText = 'ТУМАН'; emoji = '🌫️'; }
+                else if (currentWeather === 'rain') { weatherText = 'ДОЖДЬ'; emoji = '🌧️'; }
+                else if (currentWeather === 'snow') { weatherText = 'СНЕГ'; emoji = '❄️'; }
                 
-                const dayText = isNight ? '🌙 Ночь' : '☀️ День';
-                weatherDiv.innerHTML = `${emoji} Екатеринбург: ${temp}°C<br>${weatherText}, ${dayText}`;
+                const dayText = isNight ? 'НОЧЬ' : 'ДЕНЬ';
+                weatherDiv.innerHTML = `${emoji} ЕКБ: ${temp}°C<br>${weatherText} // ${dayText}`;
+                
+                // Обновляем фон в зависимости от времени
+                const wrapper = document.getElementById('video-wrapper');
+                if (isNight) {
+                    wrapper.style.background = 'linear-gradient(to bottom, #0a0a1a, #1a1a2a)';
+                } else if (currentWeather === 'rain') {
+                    wrapper.style.background = 'linear-gradient(to bottom, #1a1a1a, #2a2a2a)';
+                } else {
+                    wrapper.style.background = 'linear-gradient(to bottom, #1a1a1a, #0a0a0a)';
+                }
                 
             } catch (error) {
-                weatherDiv.textContent = 'Екатеринбург';
-                updateBackground();
+                weatherDiv.textContent = 'ЕКБ // -5°C';
             }
         }
         
-        function updateBackground() {
-            let gradient;
-            
-            if (isNight) {
-                // Ночное небо
-                if (currentWeather === 'rain') {
-                    gradient = 'linear-gradient(to bottom, #0a0a1a 0%, #1a1a3a 50%, #2a2a4a 100%)';
-                } else if (currentWeather === 'snow') {
-                    gradient = 'linear-gradient(to bottom, #1a1a2e 0%, #2a2a3e 50%, #3a3a4e 100%)';
-                } else if (currentWeather === 'cloudy') {
-                    gradient = 'linear-gradient(to bottom, #0a0a0a 0%, #1a1a2a 50%, #2a2a3a 100%)';
-                } else {
-                    gradient = 'linear-gradient(to bottom, #0a0a2e 0%, #1a1a4a 50%, #2a2a5a 100%)';
-                }
-            } else {
-                // Дневное небо
-                if (currentWeather === 'rain') {
-                    gradient = 'linear-gradient(to bottom, #4a4a5a 0%, #6a6a7a 50%, #8a8a9a 100%)';
-                } else if (currentWeather === 'snow') {
-                    gradient = 'linear-gradient(to bottom, #8a8a9a 0%, #aaaaaa 50%, #cccccc 100%)';
-                } else if (currentWeather === 'foggy') {
-                    gradient = 'linear-gradient(to bottom, #9a9a9a 0%, #b0b0b0 50%, #c0c0c0 100%)';
-                } else if (currentWeather === 'cloudy') {
-                    gradient = 'linear-gradient(to bottom, #6a6a7a 0%, #8a8a9a 50%, #aaaaaa 100%)';
-                } else {
-                    gradient = 'linear-gradient(to bottom, #4a90e2 0%, #87CEEB 50%, #b0d4f1 100%)';
-                }
-            }
-            
-            background.style.background = gradient;
-            
-            // Обновляем дорогу
-            if (currentWeather === 'snow') {
-                road.style.background = 'linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%)';
-            } else if (currentWeather === 'rain') {
-                road.style.background = 'linear-gradient(to bottom, #2a2a2a 0%, #1a1a1a 100%)';
-            } else if (isNight) {
-                road.style.background = 'linear-gradient(to bottom, #3a3a3a 0%, #2a2a2a 100%)';
-            } else {
-                road.style.background = 'linear-gradient(to bottom, #5a5a5a 0%, #4a4a4a 100%)';
-            }
-        }
-        
-        // Создаём звёзды для ночного неба
-        function createStars() {
-            const starsContainer = document.createElement('div');
-            starsContainer.id = 'stars';
-            starsContainer.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;';
-            
-            for (let i = 0; i < 100; i++) {
-                const star = document.createElement('div');
-                star.style.cssText = `
-                    position: absolute;
-                    top: ${Math.random() * 100}%;
-                    left: ${Math.random() * 100}%;
-                    width: ${Math.random() * 3 + 1}px;
-                    height: ${Math.random() * 3 + 1}px;
-                    background: white;
-                    border-radius: 50%;
-                    animation: twinkle ${Math.random() * 3 + 1}s infinite;
-                `;
-                starsContainer.appendChild(star);
-            }
-            
-            document.getElementById('container').appendChild(starsContainer);
-        }
-        
-        // Добавляем анимацию мерцания звёзд
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes twinkle {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0.3; }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Инициализация
-        createStars();
         getEkaterinburgWeather();
-        
-        // Обновляем погоду каждые 5 минут
         setInterval(getEkaterinburgWeather, 300000);
-
-const video = document.querySelector('video');
-
-// Гарантированный идеальный loop
-video.addEventListener('timeupdate', () => {
-    if (video.currentTime >= video.duration - 0.04) {
-        video.currentTime = 0.04;
-        video.play();
-    }
-});
-        
     </script>
 </body>
 </html>
