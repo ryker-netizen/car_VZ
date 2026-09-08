@@ -195,8 +195,7 @@
                 <div class="corner corner-br"></div>
                 
                 <video id="myVideo" autoplay loop muted playsinline>
-                    <source src="7f283968-6e1a-4618-af13-6f17f2f998b1.mp4" type="video/mp4">
-                    Твоё видео не загрузилось
+                    <source src="video.mp4" type="video/mp4">
                 </video>
                 
                 <div id="weather-info">ЗАГРУЗКА...</div>
@@ -206,24 +205,13 @@
         </div>
         
         <footer>
-            <span>VZ // 2026 // ВСЕ ПРАВА ЗАЩИЩЕНЫ</span>
+            <span>VZ // ВОЗМЕЗДИЕ АИДА И КОСТИ</span>
         </footer>
     </div>
     
     <script>
         const video = document.getElementById('myVideo');
         const weatherDiv = document.getElementById('weather-info');
-        
-        // Проверяем загрузку видео
-        video.addEventListener('loadeddata', () => {
-            console.log('Видео загружено!');
-            video.play();
-        });
-        
-        video.addEventListener('error', (e) => {
-            console.error('Ошибка загрузки видео:', e);
-            weatherDiv.textContent = 'ОШИБКА ВИДЕО';
-        });
         
         // Идеальный loop
         video.addEventListener('timeupdate', () => {
