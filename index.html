@@ -10,7 +10,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: #0a0a0a;
+            background: #050505;
             font-family: 'Courier New', monospace;
             overflow: hidden;
         }
@@ -18,44 +18,45 @@
             position: relative;
         }
         canvas {
-            border: 6px solid #2a2a2a;
+            border: 4px solid #1a1a1a;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
             width: 1200px;
             height: 675px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            box-shadow: 0 0 60px rgba(0,0,0,0.9);
         }
         #weather-info {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.85);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            font-size: 16px;
+            background: rgba(10, 10, 15, 0.85);
+            color: #e0e0e0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 14px;
             z-index: 10;
-            border: 2px solid #444;
-            backdrop-filter: blur(5px);
+            border: 1px solid #333;
+            backdrop-filter: blur(4px);
         }
         #title {
             position: absolute;
             bottom: 20px;
             left: 20px;
-            color: white;
-            font-size: 14px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-            letter-spacing: 1px;
+            color: #fff;
+            font-size: 13px;
+            background: rgba(10, 10, 15, 0.8);
+            padding: 8px 14px;
+            border-radius: 4px;
+            letter-spacing: 1.5px;
+            border-left: 3px solid #ff007f;
         }
     </style>
 </head>
 <body>
     <div id="container">
         <canvas id="gameCanvas" width="600" height="338"></canvas>
-        <div id="weather-info">Загружаем погоду Екатеринбурга...</div>
-        <div id="title">ДИМА И КОСТЯ // ЕКАТЕРИНБУРГ</div>
+        <div id="weather-info">Загрузка данных...</div>
+        <div id="title">ДИМА И КОСТЯ // IMPALA CONVERTIBLE '90s</div>
     </div>
     
     <script>
@@ -67,88 +68,45 @@
         
         let roadOffset = 0;
         let backgroundOffset = 0;
-        const roadSpeed = 4;
-        const backgroundSpeed = 2;
+        const roadSpeed = 6;
+        const backgroundSpeed = 1.5;
         
         let currentWeather = 'clear';
         let isNight = false;
         let temperature = 20;
         
         let trees = [];
-        let bushes = [];
         let houses = [];
         let clouds = [];
-        let streetlights = [];
         
         function initBackground() {
             trees = [];
-            bushes = [];
             houses = [];
             clouds = [];
-            streetlights = [];
-            
-            for (let i = 0; i < 25; i++) {
-                trees.push({
-                    x: Math.random() * 3000,
-                    type: Math.floor(Math.random() * 5),
-                    height: 40 + Math.random() * 60
-                });
-            }
             
             for (let i = 0; i < 30; i++) {
-                bushes.push({
-                    x: Math.random() * 3000,
-                    type: Math.floor(Math.random() * 4),
-                    width: 15 + Math.random() * 25,
-                    height: 10 + Math.random() * 15
+                trees.push({
+                    x: Math.random() * 4000,
+                    height: 50 + Math.random() * 50
                 });
             }
             
-            const houseStyles = [
-                { color: '#8B7355', roof: '#654321' },
-                { color: '#CD853F', roof: '#8B4513' },
-                { color: '#A0522D', roof: '#3E2723' },
-                { color: '#808080', roof: '#2C2C2C' },
-                { color: '#BC8F8F', roof: '#5D4037' }
-            ];
-            
-            for (let i = 0; i < 15; i++) {
-                const style = houseStyles[Math.floor(Math.random() * houseStyles.length)];
+            const houseColors = ['#2a2a35', '#3d312a', '#1e2830', '#352a35'];
+            for (let i = 0; i < 20; i++) {
                 houses.push({
-                    x: Math.random() * 3000,
-                    width: 50 + Math.random() * 40,
-                    height: 40 + Math.random() * 50,
-                    color: style.color,
-                    roofColor: style.roof,
-                    floors: 2 + Math.floor(Math.random() * 5),
-                    windows: []
+                    x: Math.random() * 4000,
+                    width: 60 + Math.random() * 50,
+                    height: 50 + Math.random() * 70,
+                    color: houseColors[Math.floor(Math.random() * houseColors.length)],
+                    windows: Array.from({length: 12}, () => Math.random() > 0.4)
                 });
-                
-                const house = houses[houses.length - 1];
-                for (let floor = 0; floor < house.floors; floor++) {
-                    for (let w = 0; w < Math.floor(house.width / 20); w++) {
-                        house.windows.push({
-                            x: w * 20 + 10,
-                            y: floor * 15 + 10,
-                            lit: Math.random() > 0.5
-                        });
-                    }
-                }
             }
             
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 20; i++) {
                 clouds.push({
-                    x: Math.random() * 3000,
-                    y: 10 + Math.random() * 60,
-                    width: 30 + Math.random() * 40,
-                    opacity: 0.3 + Math.random() * 0.5
-                });
-            }
-            
-            for (let i = 0; i < 10; i++) {
-                streetlights.push({
-                    x: 200 + i * 300,
-                    lit: Math.random() > 0.3
+                    x: Math.random() * 4000,
+                    y: 10 + Math.random() * 50,
+                    width: 40 + Math.random() * 60
                 });
             }
         }
@@ -178,232 +136,303 @@
                 else if (currentWeather === 'snow') { weatherText = 'Снег'; emoji = '❄️'; }
                 
                 const dayText = isNight ? '🌙 Ночь' : '☀️ День';
-                weatherDiv.innerHTML = `${emoji} Екатеринбург: ${temperature}°C<br>${weatherText}, ${dayText}<br>💨 Ветер: ${windSpeed} м/с`;
+                weatherDiv.innerHTML = `${emoji} ЕКБ: ${temperature}°C | ${weatherText}<br>${dayText} | Ветер: ${windSpeed} м/с`;
             } catch (error) {
-                weatherDiv.innerHTML = 'Екатеринбург: -5°C<br>Облачно, 🌙 Ночь<br>💨 Ветер: 3 м/с';
+                weatherDiv.innerHTML = '🌙 ЕКБ: -2°C | Ночь<br>Облачно | Ветер: 4 м/с';
+                isNight = true;
             }
         }
         
-        function drawDetailedCharacter(x, y, character, scale = 1.5) {
-            const p = scale;
+        // Отрисовка стилизованных аниме-персонажей по скетчу
+        function drawAnimeCharacter(x, y, charType) {
+            const p = 1.8; // масштаб спрайта
             
-            if (character === 'dima') {
-                ctx.fillStyle = '#3B2F2F';
-                ctx.fillRect(x + 2*p, y, 16*p, 5*p);
-                ctx.fillRect(x + p, y + p, 3*p, 4*p);
-                ctx.fillRect(x + 16*p, y + p, 3*p, 4*p);
-                ctx.fillRect(x + 4*p, y - p, 4*p, p);
+            // Костя (справа, с малиновыми волосами)
+            if (charType === 'kostya') {
+                // Пышные малиновые волосы (контур и пряди)
+                ctx.fillStyle = '#ff007f';
+                ctx.fillRect(x - 22*p, y - 24*p, 44*p, 28*p);
+                ctx.fillStyle = '#b30059';
+                ctx.fillRect(x - 24*p, y - 18*p, 6*p, 22*p);
+                ctx.fillRect(x + 18*p, y - 18*p, 6*p, 22*p);
                 
-                ctx.fillStyle = '#8B6914';
-                ctx.fillRect(x + 6*p, y, 3*p, 3*p);
-                ctx.fillRect(x + 12*p, y + p, 2*p, 2*p);
+                // Чёрные внутренние пряди
+                ctx.fillStyle = '#111111';
+                ctx.fillRect(x - 14*p, y - 20*p, 8*p, 10*p);
+                ctx.fillRect(x + 6*p, y - 20*p, 8*p, 10*p);
                 
-                ctx.fillStyle = '#F5DEB3';
-                ctx.fillRect(x + 2*p, y + 5*p, 16*p, 12*p);
+                // Лицо
+                ctx.fillStyle = '#ffe0bd';
+                ctx.fillRect(x - 16*p, y - 10*p, 32*p, 24*p);
                 
-                ctx.fillStyle = '#3B1F0B';
-                ctx.fillRect(x + 5*p, y + 9*p, 3*p, 3*p);
-                ctx.fillRect(x + 12*p, y + 9*p, 3*p, 3*p);
+                // Челка с прядью посередине
+                ctx.fillStyle = '#ff007f';
+                ctx.fillRect(x - 16*p, y - 12*p, 10*p, 8*p);
+                ctx.fillRect(x + 6*p, y - 12*p, 10*p, 8*p);
+                ctx.fillRect(x - 2*p, y - 10*p, 4*p, 12*p); // центральная прядь
                 
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(x + 5*p, y + 10*p, p, p);
-                ctx.fillRect(x + 12*p, y + 10*p, p, p);
-                
-                ctx.fillStyle = '#2C1810';
-                ctx.fillRect(x + 4*p, y + 7*p, 4*p, p);
-                ctx.fillRect(x + 12*p, y + 7*p, 4*p, p);
-                
-                ctx.fillStyle = '#C4956A';
-                ctx.fillRect(x + 8*p, y + 14*p, 4*p, p);
-                
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(x + 2*p, y + 17*p, 16*p, 10*p);
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 2*p, y + 17*p, 8*p, 10*p);
-            }
-            
-            if (character === 'kostya') {
-                ctx.fillStyle = '#FF1493';
-                ctx.fillRect(x + 2*p, y, 16*p, 5*p);
-                ctx.fillRect(x + p, y + p, 3*p, 4*p);
-                ctx.fillRect(x + 16*p, y + p, 3*p, 4*p);
-                
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(x + 3*p, y + p, 4*p, 3*p);
-                ctx.fillRect(x + 13*p, y, 3*p, 4*p);
-                
-                ctx.fillStyle = '#F5DEB3';
-                ctx.fillRect(x + 2*p, y + 5*p, 16*p, 12*p);
-                
+                // Огромные аниме-глаза по скетчу
+                // Левый глаз
                 ctx.fillStyle = '#1a1a1a';
-                ctx.fillRect(x + 3*p, y + 8*p, 14*p, 4*p);
+                ctx.fillRect(x - 12*p, y - 2*p, 9*p, 12*p);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x - 10*p, y, 4*p, 8*p);
+                ctx.fillRect(x - 11*p, y - 1*p, 3*p, 3*p); // верхний блик
                 
-                ctx.fillStyle = '#444444';
-                ctx.fillRect(x + 5*p, y + 9*p, 2*p, p);
-                ctx.fillRect(x + 12*p, y + 9*p, 2*p, p);
+                // Правый глаз
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(x + 3*p, y - 2*p, 9*p, 12*p);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x + 5*p, y, 4*p, 8*p);
+                ctx.fillRect(x + 4*p, y - 1*p, 3*p, 3*p); // верхний блик
+
+                // Улыбка / рот
+                ctx.fillStyle = '#222222';
+                ctx.fillRect(x - 3*p, y + 11*p, 6*p, 2*p);
+            }
+            
+            // Дима (слева, тёмные колючие волосы)
+            if (charType === 'dima') {
+                // Колючие тёмные волосы
+                ctx.fillStyle = '#211815';
+                ctx.fillRect(x - 24*p, y - 26*p, 48*p, 30*p);
                 
-                ctx.fillStyle = '#4169E1';
-                ctx.fillRect(x + 2*p, y + 17*p, 16*p, 10*p);
+                // Тёмно-коричневые акценты/пряди
+                ctx.fillStyle = '#4a352f';
+                ctx.fillRect(x - 18*p, y - 22*p, 8*p, 8*p);
+                ctx.fillRect(x + 10*p, y - 22*p, 8*p, 8*p);
+                
+                // Лицо
+                ctx.fillStyle = '#f7d3b0';
+                ctx.fillRect(x - 16*p, y - 10*p, 32*p, 24*p);
+                
+                // Колючая челка
+                ctx.fillStyle = '#211815';
+                ctx.fillRect(x - 18*p, y - 14*p, 8*p, 10*p);
+                ctx.fillRect(x - 8*p, y - 12*p, 6*p, 8*p);
+                ctx.fillRect(x + 2*p, y - 12*p, 6*p, 8*p);
+                ctx.fillRect(x + 10*p, y - 14*p, 8*p, 10*p);
+                
+                // Огромные аниме-глаза
+                // Левый глаз
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(x - 12*p, y - 2*p, 9*p, 12*p);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x - 10*p, y, 4*p, 8*p);
+                ctx.fillStyle = '#4a352f';
+                ctx.fillRect(x - 8*p, y + 3*p, 3*p, 4*p);
+                
+                // Правый глаз
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(x + 3*p, y - 2*p, 9*p, 12*p);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x + 5*p, y, 4*p, 8*p);
+                ctx.fillStyle = '#4a352f';
+                ctx.fillRect(x + 7*p, y + 3*p, 3*p, 4*p);
+
+                // Спокойный рот
+                ctx.fillStyle = '#222222';
+                ctx.fillRect(x - 2*p, y + 11*p, 4*p, 2*p);
             }
         }
+        
+        // Отрисовка Impala '90s Convertible в 3/4 перспективе спереди
+        function drawImpalaConvertible() {
+            // Разметка дороги под капотом (движение вперед/вглубь)
+            ctx.fillStyle = '#e6e6e6';
+            for (let i = 0; i < 5; i++) {
+                let pY = 180 + ((roadOffset + i * 45) % 160);
+                let progress = (pY - 180) / 160;
+                let w = 8 + progress * 24;
+                let h = 4 + progress * 12;
+                let pX = 300 - (progress * 120); // диагональный уход под капот
+                
+                ctx.fillRect(pX, pY, w, h);
+            }
 
-        function drawCarBase(x, y) {
-            ctx.fillStyle = '#111111';
-            ctx.fillRect(x + 65, y + 35, 230, 35);
-            ctx.fillStyle = '#1B5E20';
-            ctx.fillRect(x + 20, y + 65, 380, 50);
-        }
-
-        function drawCarOverlay(x, y) {
-            ctx.fillStyle = 'rgba(135, 206, 235, 0.3)';
-            ctx.fillRect(x + 70, y + 35, 220, 30);
+            // Салон и персонажи (без крыши!)
+            // Задние сиденья / перегородка
+            ctx.fillStyle = '#151518';
+            ctx.fillRect(110, 100, 380, 50);
             
-            ctx.fillStyle = '#2E7D32';
-            ctx.fillRect(x + 50, y + 30, 20, 40);
-            ctx.fillRect(x + 170, y + 30, 15, 40);
-            ctx.fillRect(x + 280, y + 30, 20, 40);
+            // Персонажи сидят внутри
+            drawAnimeCharacter(210, 115, 'dima');
+            drawAnimeCharacter(390, 115, 'kostya');
             
-            ctx.fillStyle = '#1B5E20';
-            ctx.fillRect(x + 30, y + 70, 340, 45);
-
-            ctx.fillStyle = '#1a1a1a';
-            ctx.fillRect(x + 180, y + 52, 12, 12);
-
-            ctx.fillStyle = '#FFE57F';
-            ctx.fillRect(x + 15, y + 75, 10, 15);
-            ctx.fillStyle = '#FF1744';
-            ctx.fillRect(x + 375, y + 75, 10, 15);
-
-            ctx.fillStyle = '#1a1a1a';
-            ctx.fillRect(x + 50, y + 100, 45, 45);
-            ctx.fillRect(x + 305, y + 100, 45, 45);
+            // Руль перед Костей
+            ctx.fillStyle = '#0d0d0d';
+            ctx.fillRect(360, 135, 45, 6);
+            ctx.fillRect(380, 130, 8, 15);
             
-            ctx.fillStyle = '#808080';
-            ctx.fillRect(x + 60, y + 110, 25, 25);
-            ctx.fillRect(x + 315, y + 110, 25, 25);
+            // Тонкая рамка лобового стекла (кабриолет)
+            ctx.fillStyle = '#3a3a42';
+            ctx.fillRect(120, 128, 360, 4); // Верхняя планка
+            ctx.fillRect(115, 128, 8, 40);  // Левая стойка
+            ctx.fillRect(477, 128, 8, 40);  // Правая стойка
+            
+            // Полупрозрачное стекло
+            ctx.fillStyle = 'rgba(120, 180, 220, 0.15)';
+            ctx.beginPath();
+            ctx.moveTo(123, 132);
+            ctx.lineTo(477, 132);
+            ctx.lineTo(510, 170);
+            ctx.lineTo(90, 170);
+            ctx.fill();
+
+            // Огромный угловатый капот Импалы 90-х
+            // Основной кузов (тёмно-фиолетовый / графитовый металлик)
+            ctx.fillStyle = '#1c1b24';
+            ctx.beginPath();
+            ctx.moveTo(90, 170);
+            ctx.lineTo(510, 170);
+            ctx.lineTo(570, 270);
+            ctx.lineTo(30, 270);
+            ctx.fill();
+
+            // Боковая линия капота (объем 3/4)
+            ctx.fillStyle = '#121117';
+            ctx.beginPath();
+            ctx.moveTo(30, 270);
+            ctx.lineTo(570, 270);
+            ctx.lineTo(550, 310);
+            ctx.lineTo(50, 310);
+            ctx.fill();
+
+            // Грани капота / выштамповка Impala SS
+            ctx.fillStyle = '#282633';
+            ctx.fillRect(140, 175, 320, 85);
+            ctx.fillStyle = '#1c1b24';
+            ctx.fillRect(150, 175, 300, 80);
+
+            // Решетка радиатора спереди
+            ctx.fillStyle = '#0a0a0d';
+            ctx.fillRect(120, 275, 360, 25);
+            ctx.fillStyle = '#444450';
+            for (let g = 0; g < 12; g++) {
+                ctx.fillRect(130 + g * 29, 277, 18, 21);
+            }
+
+            // Классические круглые двойные фары 90-х
+            // Левая группа фар
+            ctx.fillStyle = '#555560';
+            ctx.fillRect(55, 273, 55, 28);
+            ctx.fillStyle = '#fffae0';
+            ctx.fillRect(60, 276, 20, 22);
+            ctx.fillRect(85, 276, 20, 22);
+            
+            // Правая группа фар
+            ctx.fillStyle = '#555560';
+            ctx.fillRect(490, 273, 55, 28);
+            ctx.fillStyle = '#fffae0';
+            ctx.fillRect(495, 276, 20, 22);
+            ctx.fillRect(520, 276, 20, 22);
+
+            // Бампер с хромовой полосой
+            ctx.fillStyle = '#2b2a36';
+            ctx.fillRect(20, 305, 560, 18);
+            ctx.fillStyle = '#787888';
+            ctx.fillRect(40, 307, 520, 3); // Хром свечение
+
+            // Колеса, видна резина снизу
+            ctx.fillStyle = '#080808';
+            ctx.fillRect(35, 315, 60, 23);
+            ctx.fillRect(505, 315, 60, 23);
+            
+            // Зеркала заднего вида
+            ctx.fillStyle = '#1c1b24';
+            ctx.fillRect(85, 155, 25, 15);
+            ctx.fillRect(490, 155, 25, 15);
         }
         
         function drawBackground() {
+            // Небо
             if (isNight) {
-                ctx.fillStyle = '#0a0a2e';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                for (let i = 0; i < 50; i++) {
-                    const starX = (i * 137 + 50) % canvas.width;
-                    const starY = (i * 89 + 20) % 100;
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(starX, starY, 2, 2);
+                ctx.fillStyle = '#070714';
+                ctx.fillRect(0, 0, canvas.width, 170);
+                // Звёзды
+                ctx.fillStyle = '#ffffff';
+                for (let i = 0; i < 40; i++) {
+                    let sx = (i * 97) % canvas.width;
+                    let sy = (i * 37) % 90;
+                    ctx.fillRect(sx, sy, 1.5, 1.5);
                 }
-            } else if (currentWeather === 'cloudy' || currentWeather === 'rain') {
-                ctx.fillStyle = '#6B6B6B';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            } else if (currentWeather === 'foggy') {
-                ctx.fillStyle = '#9E9E9E';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else {
-                ctx.fillStyle = '#64B5F6';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#FFD54F';
-                ctx.fillRect(50, 30, 40, 40);
+                ctx.fillStyle = '#4a6984';
+                ctx.fillRect(0, 0, canvas.width, 170);
             }
             
-            if (!isNight && currentWeather !== 'rain') {
-                clouds.forEach(cloud => {
-                    const cloudX = (cloud.x - backgroundOffset) % 3000;
-                    if (cloudX > -100 && cloudX < canvas.width + 100) {
-                        ctx.fillStyle = `rgba(255, 255, 255, ${cloud.opacity})`;
-                        ctx.fillRect(cloudX, cloud.y, cloud.width, 15);
-                    }
-                });
-            }
+            // Облака
+            clouds.forEach(cloud => {
+                let cx = (cloud.x - backgroundOffset) % 4000;
+                if (cx < -100) cx += 4000;
+                if (cx < canvas.width + 100) {
+                    ctx.fillStyle = isNight ? 'rgba(30,30,50,0.5)' : 'rgba(220,220,240,0.4)';
+                    ctx.fillRect(cx, cloud.y, cloud.width, 12);
+                }
+            });
             
+            // Силуэты домов ЕКБ на фоне
             houses.forEach(house => {
-                const houseX = (house.x - backgroundOffset) % 3000;
-                if (houseX > -150 && houseX < canvas.width + 150) {
+                let hx = (house.x - backgroundOffset) % 4000;
+                if (hx < -150) hx += 4000;
+                if (hx < canvas.width + 150) {
                     ctx.fillStyle = house.color;
-                    ctx.fillRect(houseX, 150 - house.height, house.width, house.height);
+                    ctx.fillRect(hx, 140 - house.height, house.width, house.height);
                     
-                    ctx.fillStyle = house.roofColor;
-                    ctx.fillRect(houseX - 5, 150 - house.height - 10, house.width + 10, 10);
-                    
-                    house.windows.forEach(window => {
-                        const windowX = houseX + window.x;
-                        const windowY = 150 - house.height + window.y;
-                        ctx.fillStyle = (window.lit && isNight) ? '#FFD54F' : (isNight ? '#1a1a1a' : '#87CEEB');
-                        ctx.fillRect(windowX, windowY, 8, 10);
+                    // Окна
+                    house.windows.forEach((lit, index) => {
+                        if (lit && isNight) {
+                            ctx.fillStyle = '#ffcc44';
+                            let wx = hx + 8 + (index % 3) * 16;
+                            let wy = 140 - house.height + 10 + Math.floor(index / 3) * 14;
+                            ctx.fillRect(wx, wy, 6, 8);
+                        }
                     });
                 }
             });
             
+            // Деревья
             trees.forEach(tree => {
-                const treeX = (tree.x - backgroundOffset) % 3000;
-                if (treeX > -80 && treeX < canvas.width + 80) {
-                    const baseY = 150;
-                    ctx.fillStyle = '#5D4037';
-                    ctx.fillRect(treeX + 10, baseY - tree.height/2, 10, tree.height/2);
-                    ctx.fillStyle = '#1B5E20';
-                    ctx.fillRect(treeX, baseY - tree.height, 30, tree.height/2);
+                let tx = (tree.x - backgroundOffset) % 4000;
+                if (tx < -80) tx += 4000;
+                if (tx < canvas.width + 80) {
+                    ctx.fillStyle = '#111a10';
+                    ctx.fillRect(tx + 8, 140 - tree.height / 2, 6, tree.height / 2);
+                    ctx.fillStyle = '#1a2e18';
+                    ctx.fillRect(tx, 140 - tree.height, 22, tree.height / 2);
                 }
             });
 
-            ctx.fillStyle = '#4CAF50';
-            ctx.fillRect(0, 150, canvas.width, 20);
-        }
-        
-        function drawRoad() {
-            ctx.fillStyle = '#333333';
-            ctx.fillRect(0, 170, canvas.width, 168);
-            
-            ctx.fillStyle = '#FAFAFA';
-            for (let i = -1; i < 12; i++) {
-                const markingX = (i * 80) - roadOffset;
-                ctx.fillRect(markingX, 245, 40, 6);
-            }
-            
-            ctx.fillStyle = '#757575';
-            ctx.fillRect(0, 168, canvas.width, 2);
-            ctx.fillRect(0, 336, canvas.width, 2);
+            // Дорожное полотно (база)
+            ctx.fillStyle = '#1a1a20';
+            ctx.fillRect(0, 140, canvas.width, 198);
         }
         
         function drawWeatherEffects() {
             if (currentWeather === 'rain') {
-                ctx.fillStyle = 'rgba(100, 150, 255, 0.6)';
-                for (let i = 0; i < 80; i++) {
-                    const rainX = (i * 53 + roadOffset * 4 + Date.now() / 8) % canvas.width;
-                    const rainY = (i * 37 + Date.now() / 6) % canvas.height;
-                    ctx.fillRect(rainX, rainY, 2, 10);
+                ctx.fillStyle = 'rgba(140, 180, 255, 0.5)';
+                for (let i = 0; i < 70; i++) {
+                    let rx = (i * 41 + Date.now() / 4) % canvas.width;
+                    let ry = (i * 29 + Date.now() / 2) % canvas.height;
+                    ctx.fillRect(rx, ry, 1, 8);
                 }
             }
-            
             if (currentWeather === 'snow') {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                for (let i = 0; i < 60; i++) {
-                    const snowX = (i * 67 + Date.now() / 12) % canvas.width;
-                    const snowY = (i * 43 + Date.now() / 8) % canvas.height;
-                    ctx.fillRect(snowX, snowY, 3, 3);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                for (let i = 0; i < 50; i++) {
+                    let sx = (i * 59 + Date.now() / 10) % canvas.width;
+                    let sy = (i * 31 + Date.now() / 6) % canvas.height;
+                    ctx.fillRect(sx, sy, 2, 2);
                 }
-            }
-            
-            if (currentWeather === 'foggy') {
-                ctx.fillStyle = 'rgba(200, 200, 200, 0.3)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
         }
         
         function animate() {
-            roadOffset = (roadOffset + roadSpeed) % 80;
-            backgroundOffset = (backgroundOffset + backgroundSpeed) % 3000;
+            roadOffset = (roadOffset + roadSpeed);
+            backgroundOffset = (backgroundOffset + backgroundSpeed);
             
             drawBackground();
-            drawRoad();
-            
-            const carX = 100;
-            const carY = 150;
-            
-            drawCarBase(carX, carY);
-            drawDetailedCharacter(carX + 110, carY + 32, 'kostya', 1.3);
-            drawDetailedCharacter(carX + 210, carY + 32, 'dima', 1.3);
-            drawCarOverlay(carX, carY);
-            
+            drawImpalaConvertible();
             drawWeatherEffects();
             
             requestAnimationFrame(animate);
