@@ -79,14 +79,12 @@
             overflow: hidden;
         }
         
-        canvas {
+        video {
             width: 100%;
             height: auto;
             display: block;
-        }
-        
-        video {
-            display: none;
+            mix-blend-mode: screen;
+            -webkit-mix-blend-mode: screen;
         }
         
         .text-block {
@@ -196,9 +194,9 @@
                 <div class="corner corner-bl"></div>
                 <div class="corner corner-br"></div>
                 
-                <canvas id="outputCanvas"></canvas>
-                <video id="sourceVideo" autoplay loop muted playsinline>
+                <video id="myVideo" autoplay loop muted playsinline>
                     <source src="7f283968-6e1a-4618-af13-6f17f2f998b1.mp4" type="video/mp4">
+                    Твоё видео не загрузилось
                 </video>
                 
                 <div id="weather-info">ЗАГРУЗКА...</div>
@@ -208,139 +206,37 @@
         </div>
         
         <footer>
-            <span>VZ // ВОЗМЕЗДИЕ АИДА И КОСТИ</span>
+            <span>VZ // 2026 // ВСЕ ПРАВА ЗАЩИЩЕНЫ</span>
         </footer>
     </div>
     
     <script>
-        const video = document.getElementById('sourceVideo');
-        const canvas = document.getElementById('outputCanvas');
-        const ctx = canvas.getContext('2d');
+        const video = document.getElementById('myVideo');
         const weatherDiv = document.getElementById('weather-info');
         
-        let isNight = false;
-        let currentWeather = 'clear';
-        
-        // ИДЕАЛЬНЫЙ LOOP
-        let loopStartTime = 0; // Время начала loop
-        let loopEndTime = 0; // Время конца loop
-        let isLooping = false;
-        
-        // Настраиваем идеальный loop
-        function setupPerfectLoop() {
-            // Ждём загрузки метаданных
-            video.addEventListener('loadedmetadata', () => {
-                // По умолчанию loop с самого начала
-                loopStartTime = 0;
-                loopEndTime = video.duration;
-                
-                // Настраиваем проверку каждые 50мс
-                setInterval(checkLoop, 50);
-            });
-        }
-        
-        function checkLoop() {
-            if (video.duration > 0) {
-                // Если видео подходит к концу
-                if (video.currentTime >= video.duration - 0.1) {
-                    // Плавный переход
-                    video.style.opacity = '1';
-                    video.currentTime = 0;
-                    video.play();
-                }
-                
-                // Если видео в конце
-                if (video.ended) {
-                    video.currentTime = 0;
-                    video.play();
-                }
-            }
-        }
-        
-        // Более точный loop с плавным переходом
-        function smoothLoop() {
-            const fadeOutDuration = 0.3; // Длительность затухания в секундах
-            const fadeInDuration = 0.3; // Длительность появления
-            
-            video.addEventListener('timeupdate', () => {
-                const timeToEnd = video.duration - video.currentTime;
-                
-                // Затухание в конце
-                if (timeToEnd <= fadeOutDuration) {
-                    const opacity = timeToEnd / fadeOutDuration;
-                    video.style.opacity = Math.max(0, opacity);
-                } else {
-                    video.style.opacity = '1';
-                }
-                
-                // Переход в начало
-                if (timeToEnd <= 0.05) {
-                    video.currentTime = 0;
-                    video.style.opacity = '0';
-                    
-                    // Плавное появление
-                    setTimeout(() => {
-                        video.style.opacity = '1';
-                    }, 50);
-                    
-                    video.play();
-                }
-            });
-            
-            // Страховка
-            video.addEventListener('ended', () => {
-                video.currentTime = 0;
-                video.style.opacity = '0';
-                setTimeout(() => {
-                    video.style.opacity = '1';
-                }, 50);
-                video.play();
-            });
-        }
-        
-        // Обработка видео - убираем белый фон
+        // Проверяем загрузку видео
         video.addEventListener('loadeddata', () => {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            function processFrame() {
-                if (video.paused || video.ended) return;
-                
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
-                
-                // Убираем белый фон
-                for (let i = 0; i < data.length; i += 4) {
-                    const r = data[i];
-                    const g = data[i + 1];
-                    const b = data[i + 2];
-                    
-                    if (r > 230 && g > 230 && b > 230) {
-                        data[i + 3] = 0;
-                    }
-                    else if (r > 200 && g > 200 && b > 200) {
-                        data[i + 3] = 128;
-                    }
-                }
-                
-                ctx.putImageData(imageData, 0, 0);
-                
-                requestAnimationFrame(processFrame);
-            }
-            
-            processFrame();
+            console.log('Видео загружено!');
+            video.play();
         });
         
-        // Инициализация идеального loop
-        setupPerfectLoop();
-        smoothLoop();
+        video.addEventListener('error', (e) => {
+            console.error('Ошибка загрузки видео:', e);
+            weatherDiv.textContent = 'ОШИБКА ВИДЕО';
+        });
         
-        // Ручная настройка loop (если нужно)
-        // Можешь изменить эти значения:
-        // loopStartTime = 1.5; // Начать loop с 1.5 секунды
-        // loopEndTime = 8.5;   // Закончить loop на 8.5 секунде
+        // Идеальный loop
+        video.addEventListener('timeupdate', () => {
+            if (video.currentTime >= video.duration - 0.05) {
+                video.currentTime = 0;
+                video.play();
+            }
+        });
+        
+        video.addEventListener('ended', () => {
+            video.currentTime = 0;
+            video.play();
+        });
         
         // Получение погоды Екатеринбурга
         async function getEkaterinburgWeather() {
@@ -350,8 +246,9 @@
                 
                 const temp = Math.round(data.current.temperature_2m);
                 const weatherCode = data.current.weather_code;
-                isNight = data.current.is_day === 0;
+                const isNight = data.current.is_day === 0;
                 
+                let currentWeather = 'clear';
                 if (weatherCode <= 1) currentWeather = 'clear';
                 else if (weatherCode <= 3) currentWeather = 'cloudy';
                 else if (weatherCode <= 48) currentWeather = 'foggy';
