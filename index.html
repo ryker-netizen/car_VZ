@@ -252,6 +252,17 @@
         
         // Обновляем погоду каждые 5 минут
         setInterval(getEkaterinburgWeather, 300000);
+
+const video = document.querySelector('video');
+
+// Гарантированный идеальный loop
+video.addEventListener('timeupdate', () => {
+    if (video.currentTime >= video.duration - 0.04) {
+        video.currentTime = 0.04;
+        video.play();
+    }
+});
+        
     </script>
 </body>
 </html>
