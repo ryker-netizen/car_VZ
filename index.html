@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Дима и Костя едут на машине</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #87CEEB;
+        }
+        canvas {
+            border: 2px solid #333;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="300"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Отключаем сглаживание для пиксельного вида
+        ctx.imageSmoothingEnabled = false;
+        
+        let carX = -100; // Начальная позиция машины
+        const carSpeed = 2; // Скорость движения
+        
+        // Функция для рисования пиксельного персонажа
+        function drawCharacter(x, y, hairColor) {
+            // Размер пикселя
+            const pixelSize = 4;
+            
+            // Голова
+            ctx.fillStyle = '#FFD4A9'; // Цвет кожи
+            ctx.fillRect(x, y, pixelSize * 4, pixelSize * 4);
+            
+            // Волосы
+            ctx.fillStyle = hairColor;
+            ctx.fillRect(x, y, pixelSize * 4, pixelSize * 1);
+            ctx.fillRect(x - pixelSize, y + pixelSize, pixelSize, pixelSize * 2);
+            ctx.fillRect(x + pixelSize * 4, y + pixelSize, pixelSize, pixelSize * 2);
+            
+            // Глаза
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x + pixelSize, y + pixelSize * 2, pixelSize, pixelSize);
+            ctx.fillRect(x + pixelSize * 2, y + pixelSize * 2, pixelSize, pixelSize);
+            
+            // Тело
+            ctx.fillStyle = '#4169E1'; // Синяя одежда
+            ctx.fillRect(x - pixelSize, y + pixelSize * 4, pixelSize * 6, pixelSize * 3);
+        }
+        
+        // Функция для рисования машины
+        function drawCar(x, y) {
+            // Кузов машины
+            ctx.fillStyle = '#FF0000';
+            ctx.fillRect(x, y, 100, 30);
+            
+            // Крыша
+            ctx.fillRect(x + 20, y - 20, 60, 20);
+            
+            // Окна
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(x + 25, y - 15, 20, 10);
+            ctx.fillRect(x + 55, y - 15, 20, 10);
+            
+            // Колёса
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x + 10, y + 30, 15, 15);
+            ctx.fillRect(x + 75, y + 30, 15, 15);
+            
+            // Фары
+            ctx.fillStyle = '#FFFF00';
+            ctx.fillRect(x + 95, y + 5, 5, 5);
+        }
+        
+        // Функция анимации
+        function animate() {
+            // Очищаем canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Рисуем дорогу
+            ctx.fillStyle = '#666666';
+            ctx.fillRect(0, 200, canvas.width, 100);
+            
+            // Дорожная разметка
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(50, 245, 50, 5);
+            ctx.fillRect(150, 245, 50, 5);
+            ctx.fillRect(250, 245, 50, 5);
+            ctx.fillRect(350, 245, 50, 5);
+            
+            // Рисуем машину
+            drawCar(carX, 180);
+            
+            // Рисуем персонажей в машине
+            drawCharacter(carX + 30, 165, '#000000'); // Дима (черноволосый)
+            drawCharacter(carX + 55, 165, '#FF69B4'); // Костя (розоволосый)
+            
+            // Двигаем машину
+            carX += carSpeed;
+            
+            // Если машина уехала за экран, возвращаем её
+            if (carX > canvas.width) {
+                carX = -100;
+            }
+            
+            // Запускаем следующий кадр
+            requestAnimationFrame(animate);
+        }
+        
+        // Запускаем анимацию
+        animate();
+    </script>
+</body>
+</html>
