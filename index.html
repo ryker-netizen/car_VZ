@@ -36,7 +36,6 @@
             flex-direction: column;
         }
         
-        /* Шапка */
         header {
             padding: 30px;
             text-align: center;
@@ -59,7 +58,6 @@
             margin-top: 10px;
         }
         
-        /* Контейнер для видео */
         #video-wrapper {
             flex: 1;
             position: relative;
@@ -78,34 +76,40 @@
             border: 2px solid #333;
             background: #000;
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
         }
         
-        video {
+        canvas {
             width: 100%;
             height: auto;
             display: block;
-            mix-blend-mode: screen;
-            -webkit-mix-blend-mode: screen;
         }
         
-        /* Текст вокруг видео */
-        .text-top {
-            font-size: 12px;
-            color: #666;
-            letter-spacing: 2px;
+        video {
+            display: none;
+        }
+        
+        .text-block {
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 3px;
             text-align: center;
+            padding: 10px 20px;
+            border: 1px solid #333;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .text-top {
             margin-bottom: 20px;
         }
         
         .text-bottom {
-            font-size: 12px;
-            color: #666;
-            letter-spacing: 2px;
-            text-align: center;
             margin-top: 20px;
         }
         
-        /* Погода */
         #weather-info {
             position: absolute;
             top: 20px;
@@ -120,23 +124,22 @@
             backdrop-filter: blur(5px);
         }
         
-        /* Нижняя часть */
         footer {
             padding: 20px;
             text-align: center;
             border-top: 1px solid #333;
             background: rgba(0, 0, 0, 0.5);
-            font-size: 11px;
-            color: #555;
-            letter-spacing: 2px;
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 3px;
         }
         
-        /* Декоративные элементы */
         .corner {
             position: absolute;
             width: 20px;
             height: 20px;
             border: 1px solid #444;
+            z-index: 5;
         }
         
         .corner-tl {
@@ -167,7 +170,6 @@
             border-top: none;
         }
         
-        /* Анимация */
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -186,7 +188,7 @@
         </header>
         
         <div id="video-wrapper">
-            <div class="text-top">— ЗАГРУЗКА РЕАЛЬНОСТИ —</div>
+            <div class="text-block text-top">СВЕРХУ</div>
             
             <div id="video-container">
                 <div class="corner corner-tl"></div>
@@ -194,25 +196,67 @@
                 <div class="corner corner-bl"></div>
                 <div class="corner corner-br"></div>
                 
-                <video autoplay loop muted playsinline>
-                    <source src="video.mp4" type="video/mp4">
+                <canvas id="outputCanvas"></canvas>
+                <video id="sourceVideo" autoplay loop muted playsinline>
+                    <source src="7f283968-6e1a-4618-af13-6f17f2f998b1.mp4" type="video/mp4">
                 </video>
                 
                 <div id="weather-info">ЗАГРУЗКА...</div>
             </div>
             
-            <div class="text-bottom blink">— [ СВЯЗЬ УСТАНОВЛЕНА ] —</div>
+            <div class="text-block text-bottom blink">СНИЗУ</div>
         </div>
         
         <footer>
-            <span>© 2024 // ВСЕ ПРАВА ЗАЩИЩЕНЫ // ЕКАТЕРИНБУРГ</span>
+            <span>VZ // ВОЗМЕЗДИЕ АИДА И КОСТИ</span>
         </footer>
     </div>
     
     <script>
+        const video = document.getElementById('sourceVideo');
+        const canvas = document.getElementById('outputCanvas');
+        const ctx = canvas.getContext('2d');
         const weatherDiv = document.getElementById('weather-info');
+        
         let isNight = false;
         let currentWeather = 'clear';
+        
+        // Обработка видео - убираем белый фон
+        video.addEventListener('loadeddata', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            function processFrame() {
+                if (video.paused || video.ended) return;
+                
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                
+                // Убираем белый фон (делаем прозрачным)
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+                    
+                    // Если пиксель почти белый
+                    if (r > 230 && g > 230 && b > 230) {
+                        data[i + 3] = 0; // Полностью прозрачный
+                    }
+                    // Если пиксель светло-серый - делаем полупрозрачным
+                    else if (r > 200 && g > 200 && b > 200) {
+                        data[i + 3] = 128;
+                    }
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+                
+                requestAnimationFrame(processFrame);
+            }
+            
+            processFrame();
+        });
         
         // Получение погоды Екатеринбурга
         async function getEkaterinburgWeather() {
@@ -241,14 +285,24 @@
                 const dayText = isNight ? 'НОЧЬ' : 'ДЕНЬ';
                 weatherDiv.innerHTML = `${emoji} ЕКБ: ${temp}°C<br>${weatherText} // ${dayText}`;
                 
-                // Обновляем фон в зависимости от времени
                 const wrapper = document.getElementById('video-wrapper');
+                const container = document.getElementById('video-container');
+                
                 if (isNight) {
                     wrapper.style.background = 'linear-gradient(to bottom, #0a0a1a, #1a1a2a)';
+                    container.style.background = '#0a0a2e';
                 } else if (currentWeather === 'rain') {
                     wrapper.style.background = 'linear-gradient(to bottom, #1a1a1a, #2a2a2a)';
+                    container.style.background = '#1a1a2a';
+                } else if (currentWeather === 'snow') {
+                    wrapper.style.background = 'linear-gradient(to bottom, #2a2a2a, #3a3a3a)';
+                    container.style.background = '#2a2a3a';
+                } else if (currentWeather === 'cloudy') {
+                    wrapper.style.background = 'linear-gradient(to bottom, #1a1a1a, #222)';
+                    container.style.background = '#1a1a1a';
                 } else {
                     wrapper.style.background = 'linear-gradient(to bottom, #1a1a1a, #0a0a0a)';
+                    container.style.background = '#0a0a0a';
                 }
                 
             } catch (error) {
