@@ -1,5 +1,3 @@
-<script>
-
 const video = document.getElementById('myVideo');
 const canvas = document.getElementById('chromaCanvas');
 const ctx = canvas.getContext('2d', {
@@ -847,5 +845,3 @@ setInterval(
 requestAnimationFrame(
     render
 );
-
-</script>
