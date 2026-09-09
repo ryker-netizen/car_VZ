@@ -41,6 +41,7 @@
             text-align: center;
             border-bottom: 1px solid #333;
             background: rgba(0, 0, 0, 0.5);
+            z-index: 10;
         }
         
         .title {
@@ -66,27 +67,99 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
+            background: #0a0a0a;
+            overflow: hidden;
         }
         
+        /* ФОН С ДЕРЕВЬЯМИ И ЗДАНИЯМИ */
+        #background-scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .building {
+            position: absolute;
+            bottom: 20%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        .building-window {
+            position: absolute;
+            width: 8px;
+            height: 10px;
+            background: #FFD54F;
+            opacity: 0.7;
+        }
+        
+        .tree {
+            position: absolute;
+            bottom: 20%;
+            width: 0;
+            height: 0;
+        }
+        
+        .tree-trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 40px;
+            background: #5D4037;
+        }
+        
+        .tree-crown {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #1B5E20;
+            border-radius: 50%;
+        }
+        
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* ВИДЕО КОНТЕЙНЕР */
         #video-container {
             position: relative;
             width: 100%;
             max-width: 800px;
+            z-index: 5;
             border: 2px solid #333;
-            background: #000;
+            background: transparent;
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
             overflow: hidden;
         }
         
-        canvas {
+        video {
             width: 100%;
             height: auto;
             display: block;
-        }
-        
-        video {
-            display: none;
+            /* Убираем зелёный фон */
+            mix-blend-mode: screen;
+            -webkit-mix-blend-mode: screen;
+            filter: brightness(1.1) contrast(1.1);
         }
         
         .text-block {
@@ -100,6 +173,7 @@
             background: rgba(0, 0, 0, 0.5);
             width: 100%;
             max-width: 800px;
+            z-index: 5;
         }
         
         .text-top {
@@ -132,6 +206,7 @@
             font-size: 14px;
             color: #888;
             letter-spacing: 3px;
+            z-index: 10;
         }
         
         .corner {
@@ -188,6 +263,9 @@
         </header>
         
         <div id="video-wrapper">
+            <!-- ФОН -->
+            <div id="background-scene"></div>
+            
             <div class="text-block text-top">СВЕРХУ</div>
             
             <div id="video-container">
@@ -196,8 +274,7 @@
                 <div class="corner corner-bl"></div>
                 <div class="corner corner-br"></div>
                 
-                <canvas id="outputCanvas"></canvas>
-                <video id="sourceVideo" autoplay loop muted playsinline>
+                <video id="myVideo" autoplay loop muted playsinline>
                     <source src="animation.mp4" type="video/mp4">
                 </video>
                 
@@ -213,57 +290,63 @@
     </div>
     
     <script>
-        const video = document.getElementById('sourceVideo');
-        const canvas = document.getElementById('outputCanvas');
-        const ctx = canvas.getContext('2d');
+        const video = document.getElementById('myVideo');
         const weatherDiv = document.getElementById('weather-info');
+        const backgroundScene = document.getElementById('background-scene');
         
         let isNight = false;
         let currentWeather = 'clear';
         
-        // ЗЕЛЁНЫЙ ХРОМАКЕЙ С ЗАЩИТОЙ КОСТИ
-        function processVideoFrame() {
-            if (video.readyState >= 2) {
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // СОЗДАЁМ ФОН
+        function createBackground() {
+            // Здания
+            for (let i = 0; i < 8; i++) {
+                const building = document.createElement('div');
+                building.className = 'building';
+                building.style.left = (i * 130 + Math.random() * 30) + 'px';
+                building.style.width = (80 + Math.random() * 60) + 'px';
+                building.style.height = (100 + Math.random() * 150) + 'px';
+                building.style.bottom = (20 + Math.random() * 10) + '%';
+                backgroundScene.appendChild(building);
                 
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const data = imageData.data;
-                
-                for (let i = 0; i < data.length; i += 4) {
-                    const r = data[i];
-                    const g = data[i + 1];
-                    const b = data[i + 2];
-                    
-                    // Проверяем на ЗЕЛЁНЫЙ фон (не на белый!)
-                    // Зелёный: g сильно больше r И b
-                    const isGreenScreen = (g > 100) && (g > r * 1.6) && (g > b * 1.6);
-                    
-                    // Защита кожи: если пиксель не зелёный, а светлый
-                    // Кожа Кости: r высокий, g средний, b средний
-                    const isSkin = (r > 180) && (g > 140) && (b > 120) && (r < 255) && (g < 220) && (b < 200);
-                    
-                    // Если это зелёный фон И НЕ кожа
-                    if (isGreenScreen && !isSkin) {
-                        data[i + 3] = 0; // Делаем прозрачным
-                    }
-                    // Если это кожа - оставляем
-                    else if (isSkin) {
-                        data[i + 3] = 255; // Полностью непрозрачный
-                    }
+                // Окна
+                for (let j = 0; j < 8; j++) {
+                    const window = document.createElement('div');
+                    window.className = 'building-window';
+                    window.style.left = (10 + j * 15) + 'px';
+                    window.style.top = (10 + Math.floor(j / 3) * 25) + 'px';
+                    building.appendChild(window);
                 }
-                
-                ctx.putImageData(imageData, 0, 0);
             }
             
-            requestAnimationFrame(processVideoFrame);
+            // Деревья
+            for (let i = 0; i < 6; i++) {
+                const tree = document.createElement('div');
+                tree.className = 'tree';
+                tree.style.left = (i * 180 + Math.random() * 50) + 'px';
+                tree.style.bottom = (20 + Math.random() * 10) + '%';
+                
+                const trunk = document.createElement('div');
+                trunk.className = 'tree-trunk';
+                tree.appendChild(trunk);
+                
+                const crown = document.createElement('div');
+                crown.className = 'tree-crown';
+                tree.appendChild(crown);
+                
+                backgroundScene.appendChild(tree);
+            }
+            
+            // Звёзды
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = (Math.random() * 100) + '%';
+                star.style.top = (Math.random() * 50) + '%';
+                star.style.animationDelay = (Math.random() * 2) + 's';
+                backgroundScene.appendChild(star);
+            }
         }
-        
-        // Инициализация canvas
-        video.addEventListener('loadeddata', () => {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            processVideoFrame();
-        });
         
         // Идеальный loop
         function setupPerfectLoop() {
@@ -299,8 +382,6 @@
                 }
             }, 50);
         }
-        
-        setupPerfectLoop();
         
         // Погода Екатеринбурга
         async function getEkaterinburgWeather() {
@@ -354,6 +435,9 @@
             }
         }
         
+        // Запуск
+        createBackground();
+        setupPerfectLoop();
         getEkaterinburgWeather();
         setInterval(getEkaterinburgWeather, 300000);
     </script>
