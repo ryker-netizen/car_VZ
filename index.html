@@ -14,7 +14,7 @@
         }
         
         body {
-            background: #0a0a0a;
+            background: #050505;
             font-family: 'JetBrains Mono', monospace;
             min-height: 100vh;
             display: flex;
@@ -28,35 +28,34 @@
             width: 100%;
             max-width: 1200px;
             min-height: 100vh;
-            background: #111;
-            border-left: 1px solid #333;
-            border-right: 1px solid #333;
+            background: #0a0a0a;
+            border-left: 1px solid #222;
+            border-right: 1px solid #222;
             position: relative;
             display: flex;
             flex-direction: column;
         }
         
         header {
-            padding: 30px;
+            padding: 25px;
             text-align: center;
-            border-bottom: 1px solid #333;
-            background: rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid #222;
+            background: #000;
             z-index: 10;
         }
         
         .title {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 700;
-            letter-spacing: 5px;
+            letter-spacing: 4px;
             color: #fff;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
         
         .subtitle {
-            font-size: 14px;
-            color: #888;
-            letter-spacing: 3px;
-            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+            letter-spacing: 2px;
+            margin-top: 8px;
         }
         
         #video-wrapper {
@@ -67,192 +66,74 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background: #0a0a0a;
-            overflow: hidden;
+            background: #050505;
         }
         
-        /* ФОН С ДЕРЕВЬЯМИ И ЗДАНИЯМИ */
-        #background-scene {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-        
-        .building {
-            position: absolute;
-            bottom: 20%;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-        
-        .building-window {
-            position: absolute;
-            width: 8px;
-            height: 10px;
-            background: #FFD54F;
-            opacity: 0.7;
-        }
-        
-        .tree {
-            position: absolute;
-            bottom: 20%;
-            width: 0;
-            height: 0;
-        }
-        
-        .tree-trunk {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 10px;
-            height: 40px;
-            background: #5D4037;
-        }
-        
-        .tree-crown {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 40px;
-            background: #1B5E20;
-            border-radius: 50%;
-        }
-        
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #fff;
-            border-radius: 50%;
-            animation: twinkle 2s infinite;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-        
-        /* ВИДЕО КОНТЕЙНЕР */
         #video-container {
             position: relative;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             z-index: 5;
-            border: 2px solid #333;
-            background: transparent;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
-            overflow: hidden;
+            border: 1px solid #333;
+            background: #000;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
         }
         
+        /* Видео скрыто, рендерится через Canvas с хромакеем */
         video {
+            display: none;
+        }
+
+        canvas {
             width: 100%;
             height: auto;
             display: block;
-            /* Убираем зелёный фон */
-            mix-blend-mode: screen;
-            -webkit-mix-blend-mode: screen;
-            filter: brightness(1.1) contrast(1.1);
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
         
         .text-block {
-            font-size: 14px;
-            color: #888;
-            letter-spacing: 3px;
+            font-size: 13px;
+            color: #777;
+            letter-spacing: 2px;
             text-align: center;
             padding: 10px 20px;
-            border: 1px solid #333;
-            margin: 10px 0;
-            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #222;
+            background: #0a0a0a;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             z-index: 5;
         }
         
-        .text-top {
-            margin-bottom: 20px;
-        }
-        
-        .text-bottom {
-            margin-top: 20px;
-        }
+        .text-top { margin-bottom: 15px; }
+        .text-bottom { margin-top: 15px; }
         
         #weather-info {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.9);
             border: 1px solid #333;
-            padding: 15px;
-            font-size: 12px;
-            color: #ccc;
+            padding: 12px 16px;
+            font-size: 11px;
+            color: #aaa;
             z-index: 10;
             letter-spacing: 1px;
-            backdrop-filter: blur(5px);
+            line-height: 1.5;
         }
         
         footer {
-            padding: 20px;
+            padding: 15px;
             text-align: center;
-            border-top: 1px solid #333;
-            background: rgba(0, 0, 0, 0.5);
-            font-size: 14px;
-            color: #888;
-            letter-spacing: 3px;
-            z-index: 10;
+            border-top: 1px solid #222;
+            background: #000;
+            font-size: 12px;
+            color: #555;
+            letter-spacing: 2px;
         }
-        
-        .corner {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 1px solid #444;
-            z-index: 5;
-        }
-        
-        .corner-tl {
-            top: -1px;
-            left: -1px;
-            border-right: none;
-            border-bottom: none;
-        }
-        
-        .corner-tr {
-            top: -1px;
-            right: -1px;
-            border-left: none;
-            border-bottom: none;
-        }
-        
-        .corner-bl {
-            bottom: -1px;
-            left: -1px;
-            border-right: none;
-            border-top: none;
-        }
-        
-        .corner-br {
-            bottom: -1px;
-            right: -1px;
-            border-left: none;
-            border-top: none;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .blink {
-            animation: pulse 2s infinite;
-        }
+
+        .blink { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     </style>
 </head>
 <body>
@@ -263,25 +144,17 @@
         </header>
         
         <div id="video-wrapper">
-            <!-- ФОН -->
-            <div id="background-scene"></div>
-            
-            <div class="text-block text-top">СВЕРХУ</div>
+            <div class="text-block text-top">CHEVROLET IMPALA CONVERTIBLE '64</div>
             
             <div id="video-container">
-                <div class="corner corner-tl"></div>
-                <div class="corner corner-tr"></div>
-                <div class="corner corner-bl"></div>
-                <div class="corner corner-br"></div>
-                
-                <video id="myVideo" autoplay loop muted playsinline>
+                <video id="myVideo" autoplay loop muted playsinline crossorigin="anonymous">
                     <source src="animation.mp4" type="video/mp4">
                 </video>
-                
+                <canvas id="chromaCanvas"></canvas>
                 <div id="weather-info">ЗАГРУЗКА...</div>
             </div>
             
-            <div class="text-block text-bottom blink">СНИЗУ</div>
+            <div class="text-block text-bottom blink">PRESS ANYWHERE TO PLAY AUDIO // VZ</div>
         </div>
         
         <footer>
@@ -291,98 +164,46 @@
     
     <script>
         const video = document.getElementById('myVideo');
+        const canvas = document.getElementById('chromaCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         const weatherDiv = document.getElementById('weather-info');
-        const backgroundScene = document.getElementById('background-scene');
-        
-        let isNight = false;
-        let currentWeather = 'clear';
-        
-        // СОЗДАЁМ ФОН
-        function createBackground() {
-            // Здания
-            for (let i = 0; i < 8; i++) {
-                const building = document.createElement('div');
-                building.className = 'building';
-                building.style.left = (i * 130 + Math.random() * 30) + 'px';
-                building.style.width = (80 + Math.random() * 60) + 'px';
-                building.style.height = (100 + Math.random() * 150) + 'px';
-                building.style.bottom = (20 + Math.random() * 10) + '%';
-                backgroundScene.appendChild(building);
-                
-                // Окна
-                for (let j = 0; j < 8; j++) {
-                    const window = document.createElement('div');
-                    window.className = 'building-window';
-                    window.style.left = (10 + j * 15) + 'px';
-                    window.style.top = (10 + Math.floor(j / 3) * 25) + 'px';
-                    building.appendChild(window);
+
+        // Вырезаем зелёный хромакей в реальном времени
+        function renderChromaKey() {
+            if (video.paused || video.ended) {
+                requestAnimationFrame(renderChromaKey);
+                return;
+            }
+
+            if (canvas.width !== video.videoWidth && video.videoWidth > 0) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+            }
+
+            if (canvas.width > 0) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const l = frame.data.length / 4;
+
+                for (let i = 0; i < l; i++) {
+                    let r = frame.data[i * 4 + 0];
+                    let g = frame.data[i * 4 + 1];
+                    let b = frame.data[i * 4 + 2];
+
+                    // Фильтр для удаление зелёного хромакея
+                    if (g > 100 && r < 120 && b < 120 && g > r * 1.2 && g > b * 1.2) {
+                        frame.data[i * 4 + 3] = 0; // Полная прозрачность
+                    }
                 }
+                ctx.putImageData(frame, 0, 0);
             }
-            
-            // Деревья
-            for (let i = 0; i < 6; i++) {
-                const tree = document.createElement('div');
-                tree.className = 'tree';
-                tree.style.left = (i * 180 + Math.random() * 50) + 'px';
-                tree.style.bottom = (20 + Math.random() * 10) + '%';
-                
-                const trunk = document.createElement('div');
-                trunk.className = 'tree-trunk';
-                tree.appendChild(trunk);
-                
-                const crown = document.createElement('div');
-                crown.className = 'tree-crown';
-                tree.appendChild(crown);
-                
-                backgroundScene.appendChild(tree);
-            }
-            
-            // Звёзды
-            for (let i = 0; i < 50; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = (Math.random() * 100) + '%';
-                star.style.top = (Math.random() * 50) + '%';
-                star.style.animationDelay = (Math.random() * 2) + 's';
-                backgroundScene.appendChild(star);
-            }
+            requestAnimationFrame(renderChromaKey);
         }
-        
-        // Идеальный loop
-        function setupPerfectLoop() {
-            video.addEventListener('timeupdate', () => {
-                const timeToEnd = video.duration - video.currentTime;
-                
-                if (timeToEnd <= 0.15) {
-                    const opacity = (timeToEnd / 0.15);
-                    video.style.opacity = Math.max(0, opacity);
-                } else {
-                    video.style.opacity = '1';
-                }
-                
-                if (timeToEnd <= 0.02) {
-                    video.currentTime = 0.02;
-                    video.play();
-                    
-                    setTimeout(() => {
-                        video.style.opacity = '1';
-                    }, 50);
-                }
-            });
-            
-            video.addEventListener('ended', () => {
-                video.currentTime = 0;
-                video.play();
-            });
-            
-            setInterval(() => {
-                if (video.ended || video.currentTime >= video.duration - 0.03) {
-                    video.currentTime = 0;
-                    video.play();
-                }
-            }, 50);
-        }
-        
+
+        video.addEventListener('play', () => {
+            renderChromaKey();
+        });
+
         // Погода Екатеринбурга
         async function getEkaterinburgWeather() {
             try {
@@ -391,53 +212,22 @@
                 
                 const temp = Math.round(data.current.temperature_2m);
                 const weatherCode = data.current.weather_code;
-                isNight = data.current.is_day === 0;
-                
-                if (weatherCode <= 1) currentWeather = 'clear';
-                else if (weatherCode <= 3) currentWeather = 'cloudy';
-                else if (weatherCode <= 48) currentWeather = 'foggy';
-                else if (weatherCode <= 67) currentWeather = 'rain';
-                else if (weatherCode <= 77) currentWeather = 'snow';
-                else currentWeather = 'rain';
+                const isNight = data.current.is_day === 0;
                 
                 let weatherText = 'ЯСНО';
                 let emoji = '☀️';
-                if (currentWeather === 'cloudy') { weatherText = 'ОБЛАЧНО'; emoji = '☁️'; }
-                else if (currentWeather === 'foggy') { weatherText = 'ТУМАН'; emoji = '🌫️'; }
-                else if (currentWeather === 'rain') { weatherText = 'ДОЖДЬ'; emoji = '🌧️'; }
-                else if (currentWeather === 'snow') { weatherText = 'СНЕГ'; emoji = '❄️'; }
+                if (weatherCode > 1 && weatherCode <= 3) { weatherText = 'ОБЛАЧНО'; emoji = '☁️'; }
+                else if (weatherCode > 3 && weatherCode <= 48) { weatherText = 'ТУМАН'; emoji = '🌫️'; }
+                else if (weatherCode > 48 && weatherCode <= 67) { weatherText = 'ДОЖДЬ'; emoji = '🌧️'; }
+                else if (weatherCode > 67) { weatherText = 'СНЕГ'; emoji = '❄️'; }
                 
                 const dayText = isNight ? 'НОЧЬ' : 'ДЕНЬ';
                 weatherDiv.innerHTML = `${emoji} ЕКБ: ${temp}°C<br>${weatherText} // ${dayText}`;
-                
-                const wrapper = document.getElementById('video-wrapper');
-                const container = document.getElementById('video-container');
-                
-                if (isNight) {
-                    wrapper.style.background = 'linear-gradient(to bottom, #0a0a1a, #1a1a2a)';
-                    container.style.background = '#0a0a2e';
-                } else if (currentWeather === 'rain') {
-                    wrapper.style.background = 'linear-gradient(to bottom, #1a1a1a, #2a2a2a)';
-                    container.style.background = '#1a1a2a';
-                } else if (currentWeather === 'snow') {
-                    wrapper.style.background = 'linear-gradient(to bottom, #2a2a2a, #3a3a3a)';
-                    container.style.background = '#2a2a3a';
-                } else if (currentWeather === 'cloudy') {
-                    wrapper.style.background = 'linear-gradient(to bottom, #1a1a1a, #222)';
-                    container.style.background = '#1a1a1a';
-                } else {
-                    wrapper.style.background = 'linear-gradient(to bottom, #1a1a1a, #0a0a0a)';
-                    container.style.background = '#0a0a0a';
-                }
-                
             } catch (error) {
-                weatherDiv.textContent = 'ЕКБ // -5°C';
+                weatherDiv.textContent = 'ЕКБ // WEATHER OFFLINE';
             }
         }
-        
-        // Запуск
-        createBackground();
-        setupPerfectLoop();
+
         getEkaterinburgWeather();
         setInterval(getEkaterinburgWeather, 300000);
     </script>
